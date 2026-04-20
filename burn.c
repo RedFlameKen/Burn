@@ -140,6 +140,15 @@ void burn_fill_rect2(BurnCanvas canvas, Rect rect, Color color) {
   }
 }
 
+u8 is_top_left(vec2 start, vec2 end){
+  vec2 edge = { end.x - start.x, end.y - start.y };
+
+  u8 is_top_edge = edge.y == 0 && edge.x > 0;
+  u8 is_left_edge = edge.y < 0;
+
+  return is_top_edge || is_left_edge;
+}
+
 i32 burn_edge_cross_product(vec2 a, vec2 b, vec2 p) {
   vec2 ab = { b.y - a.y, b.x - a.x };
   vec2 ap = { p.y - a.y, p.x - a.x };
@@ -153,12 +162,16 @@ void burn_fill_triangle(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
   i32 x_max = BURN_MAX(BURN_MAX(v1.x, v2.x), v3.x);
   i32 y_max = BURN_MAX(BURN_MAX(v1.y, v2.y), v3.y);
 
+  u8 bias1 = is_top_left(v2, v3) ? 0 : -1;
+  u8 bias2 = is_top_left(v3, v1) ? 0 : -1;
+  u8 bias3 = is_top_left(v1, v2) ? 0 : -1;
+
   for (i32 y = y_min; y <= y_max; y++) {
     for (i32 x = x_min; x <= x_max; x++) {
       vec2 p = {x, y};
-      i32 w1 = burn_edge_cross_product(v2, v3, p);
-      i32 w2 = burn_edge_cross_product(v3, v1, p);
-      i32 w3 = burn_edge_cross_product(v1, v2, p);
+      i32 w1 = burn_edge_cross_product(v2, v3, p) + bias1;
+      i32 w2 = burn_edge_cross_product(v3, v1, p) + bias2;
+      i32 w3 = burn_edge_cross_product(v1, v2, p) + bias3;
 
       if (w1 >= 0 && w2 >= 0 && w3 >= 0)
         BURN_PIXEL(canvas, x, y) = color;
