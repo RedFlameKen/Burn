@@ -1,9 +1,9 @@
 #ifndef TIME_C
 #define TIME_C
 
-#define NANOS_PER_SECOND  1000000000.0f
-#define NANOS_PER_MILLIS  1000000.0f
-#define MILLIS_PER_SECOND 1000.0f
+#define NANOS_PER_SECOND  1000000000.0
+#define NANOS_PER_MILLIS  1000000.0
+#define MILLIS_PER_SECOND 1000.0
 
 unsigned long current_time_nanos(void);
 unsigned long current_time_millis(void);

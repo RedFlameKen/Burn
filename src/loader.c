@@ -44,6 +44,7 @@ typedef struct {
 
 BurnCanvas burn_render(float dt);
 void burn_update(float dt);
+float costhis(float x);
 
 #if DISPLAY_BACKEND == SDL_BACKEND
 
@@ -77,6 +78,7 @@ void sdl_loop(Display *display){
     cur_time = current_time_nanos();
 
     dt += (cur_time - prev_time) / delta_time;
+    prev_time = cur_time;
 
     if (dt >= 1){
       SDL_Event e;
@@ -91,8 +93,6 @@ void sdl_loop(Display *display){
       frames++;
       SDL_UpdateWindowSurface(display->window);
     }
-
-    prev_time = cur_time;
 
     cur_check = current_time_millis();
     if ((cur_check - prev_check) >= MILLIS_PER_SECOND) {
