@@ -30,6 +30,7 @@ typedef struct {
   u32 h;
 } Rect;
 
+BurnCanvas burn_create_canvas(Color* pixels, u32 width, u32 height);
 void burn_draw_line(BurnCanvas canvas, i32 x1, i32 y1, i32 x2, i32 y2, Color color);
 void burn_draw_rect(BurnCanvas canvas, i32 x, i32 y, i32 w, i32 h, Color color);
 void burn_draw_rect2(BurnCanvas canvas, Rect rect, Color color);
@@ -42,6 +43,10 @@ void burn_fill_rect2(BurnCanvas canvas, Rect rect, Color color);
 #define BURN_PIXEL(canvas, x, y) (canvas).pixels[(y)*(canvas.width) + (x)]
 #define BURN_SIGN(T, x) ((T)(0) < x) - (x < (T)(0))
 #define BURN_ABS(T, x) (BURN_SIGN(T, x)*(x))
+
+BurnCanvas burn_create_canvas(Color* pixels, u32 width, u32 height) {
+  return (BurnCanvas){.pixels = pixels, .width = width, .height = height};
+}
 
 void burn_draw_line(BurnCanvas canvas, i32 x1, i32 y1, i32 x2, i32 y2, Color color) {
   i32 dx = BURN_ABS(i32, x2 - x1);
