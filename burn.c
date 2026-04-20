@@ -51,6 +51,8 @@ void burn_fill_rect(BurnCanvas canvas, i32 x, i32 y, i32 w, i32 h, Color color);
 void burn_fill_rect2(BurnCanvas canvas, Rect rect, Color color);
 void burn_fill_triangle(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
                         Color color);
+void burn_fill_triangle3c(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
+                        Color c1, Color c2, Color c3);
 
 #define BURN_IMPLEMENTATION
 #ifdef BURN_IMPLEMENTATION
@@ -153,6 +155,47 @@ i32 burn_edge_cross_product(vec2 a, vec2 b, vec2 p) {
   vec2 ab = { b.y - a.y, b.x - a.x };
   vec2 ap = { p.y - a.y, p.x - a.x };
   return ab.x * ap.y - ap.x * ab.y;
+}
+
+u8 burn_interpolate_color(float alpha, float beta, float gamma, u8 c1, u8 c2, u8 c3){
+  return (alpha) * c1 + (beta) * c2 + (gamma) * c3;
+}
+
+void burn_fill_triangle3c(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
+                        Color c1, Color c2, Color c3) {
+  float area = burn_edge_cross_product(v1, v2, v3);
+  i32 x_min = BURN_MIN(BURN_MIN(v1.x, v2.x), v3.x);
+  i32 y_min = BURN_MIN(BURN_MIN(v1.y, v2.y), v3.y);
+  i32 x_max = BURN_MAX(BURN_MAX(v1.x, v2.x), v3.x);
+  i32 y_max = BURN_MAX(BURN_MAX(v1.y, v2.y), v3.y);
+
+  u8 bias1 = is_top_left(v2, v3) ? 0 : -1;
+  u8 bias2 = is_top_left(v3, v1) ? 0 : -1;
+  u8 bias3 = is_top_left(v1, v2) ? 0 : -1;
+
+  for (i32 y = y_min; y <= y_max; y++) {
+    for (i32 x = x_min; x <= x_max; x++) {
+      vec2 p = {x, y};
+      i32 w1 = burn_edge_cross_product(v2, v3, p) + bias1;
+      i32 w2 = burn_edge_cross_product(v3, v1, p) + bias2;
+      i32 w3 = burn_edge_cross_product(v1, v2, p) + bias3;
+
+      if (w1 >= 0 && w2 >= 0 && w3 >= 0){
+        float alpha = w1 / area;
+        float beta  = w2 / area;
+        float gamma = w3 / area;
+
+        u8 a = burn_interpolate_color(alpha, beta, gamma, c1.a, c2.a, c3.a);
+        u8 r = burn_interpolate_color(alpha, beta, gamma, c1.r, c2.r, c3.r);
+        u8 g = burn_interpolate_color(alpha, beta, gamma, c1.g, c2.g, c3.g);
+        u8 b = burn_interpolate_color(alpha, beta, gamma, c1.b, c2.b, c3.b);
+
+        Color color = (Color) { .a = a, .r = r, .g = g, .b = b };
+
+        BURN_PIXEL(canvas, x, y) = color;
+      }
+    }
+  }
 }
 
 void burn_fill_triangle(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
