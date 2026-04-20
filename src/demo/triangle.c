@@ -1,6 +1,8 @@
 #include "../loader.c"
 
 static Color pixels[DEFAULT_WIDTH * DEFAULT_HEIGHT] = {0};
+
+// TODO: Triangle is only white in html
 BurnCanvas burn_render(float dt){
   BurnCanvas canvas = (BurnCanvas){
     .pixels = pixels,
@@ -14,16 +16,22 @@ BurnCanvas burn_render(float dt){
 
   Color c1 = (Color){
       .r = 0xFF,
+      .g = 0x00,
+      .b = 0x00,
       .a = 0xFF
       };
 
   Color c2 = (Color){
       .a = 0xFF,
-      .g = 0xFF
+      .r = 0x00,
+      .g = 0xFF,
+      .b = 0x00,
       };
 
   Color c3 = (Color){
       .a = 0xFF,
+      .r = 0x00,
+      .g = 0x00,
       .b = 0xFF
       };
 
