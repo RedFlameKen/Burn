@@ -31,10 +31,20 @@ function render(w, ctx, dt) {
   const height = view.getInt32(8, true)
 
   const pixels = new Uint8ClampedArray(memory.buffer, pixels_offset, width * height * 4)
+  rgba_to_bgra(pixels)
 
   const image = new ImageData(pixels, width, height)
   ctx.canvas.width = width
   ctx.canvas.height = height
 
   ctx.putImageData(image, 0, 0)
+}
+
+function rgba_to_bgra(pixels){
+  for(let i = 0; i < pixels.length; i+=4){
+    const b = pixels[i];
+    const r = pixels[i+2];
+    pixels[i] = r;
+    pixels[i+2] = b;
+  }
 }
