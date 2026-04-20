@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+float sinf(float x);
+float cosf(float x);
+
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
@@ -36,6 +39,11 @@ typedef struct {
 } vec2;
 
 typedef struct {
+  float x;
+  float y;
+} vec2f;
+
+typedef struct {
   i32 x;
   i32 y;
   i32 z;
@@ -49,10 +57,11 @@ void burn_draw_rect2(BurnCanvas canvas, Rect rect, Color color);
 void burn_fill(BurnCanvas canvas, Color color);
 void burn_fill_rect(BurnCanvas canvas, i32 x, i32 y, i32 w, i32 h, Color color);
 void burn_fill_rect2(BurnCanvas canvas, Rect rect, Color color);
-void burn_fill_triangle(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
+void burn_fill_triangle(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
                         Color color);
-void burn_fill_triangle3c(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
+void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
                         Color c1, Color c2, Color c3);
+vec2f burn_rotate_2d(vec2f point, vec2f center, float angle);
 
 #define BURN_IMPLEMENTATION
 #ifdef BURN_IMPLEMENTATION
@@ -142,18 +151,18 @@ void burn_fill_rect2(BurnCanvas canvas, Rect rect, Color color) {
   }
 }
 
-u8 is_top_left(vec2 start, vec2 end){
-  vec2 edge = { end.x - start.x, end.y - start.y };
+float is_top_left(vec2f start, vec2f end){
+  vec2f edge = { end.x - start.x, end.y - start.y };
 
-  u8 is_top_edge = edge.y == 0 && edge.x > 0;
-  u8 is_left_edge = edge.y < 0;
+  float is_top_edge = edge.y == 0 && edge.x > 0;
+  float is_left_edge = edge.y < 0;
 
   return is_top_edge || is_left_edge;
 }
 
-i32 burn_edge_cross_product(vec2 a, vec2 b, vec2 p) {
-  vec2 ab = { b.y - a.y, b.x - a.x };
-  vec2 ap = { p.y - a.y, p.x - a.x };
+float burn_edge_cross_product(vec2f a, vec2f b, vec2f p) {
+  vec2f ab = { b.y - a.y, b.x - a.x };
+  vec2f ap = { p.y - a.y, p.x - a.x };
   return ab.x * ap.y - ap.x * ab.y;
 }
 
@@ -161,7 +170,7 @@ u8 burn_interpolate_color(float alpha, float beta, float gamma, u8 c1, u8 c2, u8
   return (alpha) * c1 + (beta) * c2 + (gamma) * c3;
 }
 
-void burn_fill_triangle3c(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
+void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
                         Color c1, Color c2, Color c3) {
   float area = burn_edge_cross_product(v1, v2, v3);
   i32 x_min = BURN_MIN(BURN_MIN(v1.x, v2.x), v3.x);
@@ -169,22 +178,22 @@ void burn_fill_triangle3c(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
   i32 x_max = BURN_MAX(BURN_MAX(v1.x, v2.x), v3.x);
   i32 y_max = BURN_MAX(BURN_MAX(v1.y, v2.y), v3.y);
 
-  i32 delta_w1_col = (v3.y - v2.y);
-  i32 delta_w2_col = (v1.y - v3.y);
-  i32 delta_w3_col = (v2.y - v1.y);
+  float delta_w1_col = (v3.y - v2.y);
+  float delta_w2_col = (v1.y - v3.y);
+  float delta_w3_col = (v2.y - v1.y);
 
-  i32 delta_w1_row = (v2.x - v3.x);
-  i32 delta_w2_row = (v3.x - v1.x);
-  i32 delta_w3_row = (v1.x - v2.x);
+  float delta_w1_row = (v2.x - v3.x);
+  float delta_w2_row = (v3.x - v1.x);
+  float delta_w3_row = (v1.x - v2.x);
 
-  u8 bias1 = is_top_left(v2, v3) ? 0 : -1;
-  u8 bias2 = is_top_left(v3, v1) ? 0 : -1;
-  u8 bias3 = is_top_left(v1, v2) ? 0 : -1;
+  float bias1 = is_top_left(v2, v3) ? 0 : -1;
+  float bias2 = is_top_left(v3, v1) ? 0 : -1;
+  float bias3 = is_top_left(v1, v2) ? 0 : -1;
 
-  vec2 p = {x_min, y_min};
-  i32 w1_row = burn_edge_cross_product(v2, v3, p) + bias1;
-  i32 w2_row = burn_edge_cross_product(v3, v1, p) + bias2;
-  i32 w3_row = burn_edge_cross_product(v1, v2, p) + bias3;
+  vec2f p = {x_min, y_min};
+  float w1_row = burn_edge_cross_product(v2, v3, p) + bias1;
+  float w2_row = burn_edge_cross_product(v3, v1, p) + bias2;
+  float w3_row = burn_edge_cross_product(v1, v2, p) + bias3;
 
   for (i32 y = y_min; y <= y_max; y++) {
     float w1 = w1_row;
@@ -193,18 +202,20 @@ void burn_fill_triangle3c(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
     for (i32 x = x_min; x <= x_max; x++) {
 
       if (w1 >= 0 && w2 >= 0 && w3 >= 0){
-        float alpha = w1 / area;
-        float beta  = w2 / area;
-        float gamma = w3 / area;
+        if (x <= canvas.width && y <= canvas.height){
+          float alpha = w1 / area;
+          float beta  = w2 / area;
+          float gamma = w3 / area;
 
-        u8 a = burn_interpolate_color(alpha, beta, gamma, c1.a, c2.a, c3.a);
-        u8 r = burn_interpolate_color(alpha, beta, gamma, c1.r, c2.r, c3.r);
-        u8 g = burn_interpolate_color(alpha, beta, gamma, c1.g, c2.g, c3.g);
-        u8 b = burn_interpolate_color(alpha, beta, gamma, c1.b, c2.b, c3.b);
+          u8 a = burn_interpolate_color(alpha, beta, gamma, c1.a, c2.a, c3.a);
+          u8 r = burn_interpolate_color(alpha, beta, gamma, c1.r, c2.r, c3.r);
+          u8 g = burn_interpolate_color(alpha, beta, gamma, c1.g, c2.g, c3.g);
+          u8 b = burn_interpolate_color(alpha, beta, gamma, c1.b, c2.b, c3.b);
 
-        Color color = (Color) { .a = a, .r = r, .g = g, .b = b };
+          Color color = (Color) { .a = a, .r = r, .g = g, .b = b };
 
-        BURN_PIXEL(canvas, x, y) = color;
+          BURN_PIXEL(canvas, x, y) = color;
+        }
       }
       w1 += delta_w1_col;
       w2 += delta_w2_col;
@@ -216,7 +227,7 @@ void burn_fill_triangle3c(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
   }
 }
 
-void burn_fill_triangle(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
+void burn_fill_triangle(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
                         Color color) {
   i32 x_min = BURN_MIN(BURN_MIN(v1.x, v2.x), v3.x);
   i32 y_min = BURN_MIN(BURN_MIN(v1.y, v2.y), v3.y);
@@ -224,22 +235,22 @@ void burn_fill_triangle(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
   i32 y_max = BURN_MAX(BURN_MAX(v1.y, v2.y), v3.y);
 
 
-  i32 delta_w1_col = (v3.y - v2.y);
-  i32 delta_w2_col = (v1.y - v3.y);
-  i32 delta_w3_col = (v2.y - v1.y);
+  float delta_w1_col = (v3.y - v2.y);
+  float delta_w2_col = (v1.y - v3.y);
+  float delta_w3_col = (v2.y - v1.y);
 
-  i32 delta_w1_row = (v2.x - v3.x);
-  i32 delta_w2_row = (v3.x - v1.x);
-  i32 delta_w3_row = (v1.x - v2.x);
+  float delta_w1_row = (v2.x - v3.x);
+  float delta_w2_row = (v3.x - v1.x);
+  float delta_w3_row = (v1.x - v2.x);
 
-  u8 bias1 = is_top_left(v2, v3) ? 0 : -1;
-  u8 bias2 = is_top_left(v3, v1) ? 0 : -1;
-  u8 bias3 = is_top_left(v1, v2) ? 0 : -1;
+  float bias1 = is_top_left(v2, v3) ? 0 : -1;
+  float bias2 = is_top_left(v3, v1) ? 0 : -1;
+  float bias3 = is_top_left(v1, v2) ? 0 : -1;
 
-  vec2 p = {x_min, y_min};
-  i32 w1_row = burn_edge_cross_product(v2, v3, p) + bias1;
-  i32 w2_row = burn_edge_cross_product(v3, v1, p) + bias2;
-  i32 w3_row = burn_edge_cross_product(v1, v2, p) + bias3;
+  vec2f p = {x_min, y_min};
+  float w1_row = burn_edge_cross_product(v2, v3, p) + bias1;
+  float w2_row = burn_edge_cross_product(v3, v1, p) + bias2;
+  float w3_row = burn_edge_cross_product(v1, v2, p) + bias3;
 
   for (i32 y = y_min; y <= y_max; y++) {
     float w1 = w1_row;
@@ -247,7 +258,8 @@ void burn_fill_triangle(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
     float w3 = w3_row;
     for (i32 x = x_min; x <= x_max; x++) {
       if (w1 >= 0 && w2 >= 0 && w3 >= 0)
-        BURN_PIXEL(canvas, x, y) = color;
+        if (x <= canvas.width && y <= canvas.height)
+          BURN_PIXEL(canvas, x, y) = color;
 
       w1 += delta_w1_col;
       w2 += delta_w2_col;
@@ -257,6 +269,17 @@ void burn_fill_triangle(BurnCanvas canvas, vec2 v1, vec2 v2, vec2 v3,
     w2_row += delta_w2_row;
     w3_row += delta_w3_row;
   }
+}
+
+vec2f burn_rotate_2d(vec2f point, vec2f center, float angle){
+  vec2f rotated;
+  point.x -= center.x;
+  point.y -= center.y;
+  rotated.x = (point.x * cosf(angle)) - (point.y * sinf(angle));
+  rotated.y = (point.x * sinf(angle)) + (point.y * cosf(angle));
+  rotated.x += center.x;
+  rotated.y += center.y;
+  return rotated;
 }
 
 #endif

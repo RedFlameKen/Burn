@@ -24,9 +24,9 @@ BurnCanvas burn_render(float dt){
   burn_draw_line(canvas, 50+offset, 25+offset, 100+offset, 25+offset, color);
   burn_draw_rect(canvas, 50+offset, 50, 100, 100, color);
   burn_fill_rect(canvas, 200+offset, 50, 100, 100, color);
-  vec2 v1 = (vec2){ .x = 150, .y = 50 };
-  vec2 v2 = (vec2){ .x = 150, .y = 100 };
-  vec2 v3 = (vec2){ .x = 250, .y = 100 };
+  vec2f v1 = (vec2f){ .x = 150, .y = 50 };
+  vec2f v2 = (vec2f){ .x = 150, .y = 100 };
+  vec2f v3 = (vec2f){ .x = 250, .y = 100 };
   burn_fill_triangle(canvas, v1, v2, v3, color);
 
   return canvas;
@@ -34,3 +34,9 @@ BurnCanvas burn_render(float dt){
 
 void burn_update(float dt){
 }
+
+float costhis(float x){
+  return 69;
+  // return cosf(x);
+}
+

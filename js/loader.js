@@ -1,12 +1,15 @@
 const DEFAULT_WIDTH = 800
 const DEFAULT_HEIGHT = 600
 
-async function getBurnCanvas(w) {
-  w.instance.exports.burn_render()
-}
+const libs = {
+  env: {
+    cosf: (x) => Math.cos(x),
+    sinf: (x) => Math.sin(x),
+  }
+};
 
 async function start(canvasId, wasmPath) {
-  const w = await WebAssembly.instantiateStreaming(fetch(wasmPath), {})
+  const w = await WebAssembly.instantiateStreaming(fetch(wasmPath), libs)
   const app = document.getElementById(`app-${canvasId}`)
   const ctx = app.getContext("2d")
 
