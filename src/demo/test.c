@@ -1,4 +1,4 @@
-#include "../renderer.c"
+#include "../loader.c"
 
 static Color pixels[DEFAULT_WIDTH * DEFAULT_HEIGHT] = {0};
 static int offset = 0;

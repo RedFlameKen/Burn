@@ -1,5 +1,5 @@
-#ifndef RENDERER_C
-#define RENDERER_C
+#ifndef LOADER_C
+#define LOADER_C
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_oldnames.h>
