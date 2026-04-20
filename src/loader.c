@@ -1,13 +1,8 @@
 #ifndef LOADER_C
 #define LOADER_C
 
-#include <SDL3/SDL_events.h>
-#include <SDL3/SDL_oldnames.h>
 #define BURN_IMPLEMENTATION
 #include "../burn.c"
-
-#define TIME_IMPLEMENTATION
-#include "util/time.c"
 
 #define DEFAULT_WIDTH 800
 #define DEFAULT_HEIGHT 600
@@ -29,7 +24,13 @@
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_surface.h>
 #include <SDL3/SDL_video.h>
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_oldnames.h>
 #include <stdio.h>
+
+#define TIME_IMPLEMENTATION
+#include "util/time.c"
+
 #endif
 
 typedef struct {
