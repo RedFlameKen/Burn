@@ -27,5 +27,6 @@ BurnCanvas burn_render(float dt){
 
   return canvas;
 }
+
 void burn_update(float dt){
 }
