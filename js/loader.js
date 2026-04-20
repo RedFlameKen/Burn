@@ -13,11 +13,18 @@ async function start(canvasId, wasmPath) {
   const app = document.getElementById(`app-${canvasId}`)
   const ctx = app.getContext("2d")
 
+  const div = document.getElementById(`div-${canvasId}`)
+  let state = { paused: false };
+  div.addEventListener("mouseenter", () => state.paused = false)
+  div.addEventListener("mouseleave", () => state.paused = true)
+
   prev_time = 0;
   function loop(cur_time) {
     const dt = cur_time - prev_time;
     prev_time = cur_time
-    render(w, ctx, dt)
+    if (!state.paused) {
+      render(w, ctx, dt)
+    }
     window.requestAnimationFrame(loop)
   }
   window.requestAnimationFrame(loop)
