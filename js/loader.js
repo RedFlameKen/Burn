@@ -18,7 +18,7 @@ async function start(canvasId, wasmPath) {
   const ctx = app.getContext("2d")
 
   const div = document.getElementById(`div-${canvasId}`)
-  let state = { paused: false };
+  let state = { paused: true };
   div.addEventListener("mouseenter", () => state.paused = false)
   div.addEventListener("mouseleave", () => state.paused = true)
 
@@ -32,7 +32,14 @@ async function start(canvasId, wasmPath) {
     }
     window.requestAnimationFrame(loop)
   }
-  window.requestAnimationFrame(loop)
+
+  function initial_load(cur_time){
+    prev_time = cur_time
+    render(w, ctx, 0)
+    window.requestAnimationFrame(loop)
+  }
+
+  window.requestAnimationFrame(initial_load)
 
 }
 
