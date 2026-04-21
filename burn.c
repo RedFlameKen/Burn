@@ -17,7 +17,7 @@ typedef int32_t i32;
 typedef int64_t i64;
 
 typedef struct {
-  u8 b, g, r, a;
+  u8 r, g, b, a;
 } Color;
 
 typedef struct {
@@ -192,7 +192,6 @@ u8 burn_interpolate_color(float alpha, float beta, float gamma, u8 c1, u8 c2, u8
 
 void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
                         Color c1, Color c2, Color c3) {
-  float area = burn_edge_cross_product(v1, v2, v3);
   i32 x_min = BURN_MIN(BURN_MIN(v1.x, v2.x), v3.x);
   i32 y_min = BURN_MIN(BURN_MIN(v1.y, v2.y), v3.y);
   i32 x_max = BURN_MAX(BURN_MAX(v1.x, v2.x), v3.x);
@@ -209,6 +208,8 @@ void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
   float bias1 = is_top_left(v2, v3) ? 0 : -1;
   float bias2 = is_top_left(v3, v1) ? 0 : -1;
   float bias3 = is_top_left(v1, v2) ? 0 : -1;
+
+  float area = burn_edge_cross_product(v1, v2, v3);
 
   vec2f p = {x_min, y_min};
   float w1_row = burn_edge_cross_product(v2, v3, p) + bias1;
@@ -280,6 +281,62 @@ void burn_fill_triangle(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
       if (w1 >= 0 && w2 >= 0 && w3 >= 0)
         if (x >= 0 && y >= 0 && x <= canvas.width && y <= canvas.height)
           BURN_PIXEL(canvas, x, y) = color;
+
+      w1 += delta_w1_col;
+      w2 += delta_w2_col;
+      w3 += delta_w3_col;
+    }
+    w1_row += delta_w1_row;
+    w2_row += delta_w2_row;
+    w3_row += delta_w3_row;
+  }
+}
+
+void burn_draw_triangle_textured(BurnCanvas canvas, vec2f v1, vec2f v2,
+                                 vec2f v3, vec2f tv1, vec2f tv2, vec2f tv3,
+                                 BurnCanvas texture) {
+  i32 x_min = BURN_MIN(BURN_MIN(v1.x, v2.x), v3.x);
+  i32 y_min = BURN_MIN(BURN_MIN(v1.y, v2.y), v3.y);
+  i32 x_max = BURN_MAX(BURN_MAX(v1.x, v2.x), v3.x);
+  i32 y_max = BURN_MAX(BURN_MAX(v1.y, v2.y), v3.y);
+
+  float delta_w1_col = (v3.y - v2.y);
+  float delta_w2_col = (v1.y - v3.y);
+  float delta_w3_col = (v2.y - v1.y);
+
+  float delta_w1_row = (v2.x - v3.x);
+  float delta_w2_row = (v3.x - v1.x);
+  float delta_w3_row = (v1.x - v2.x);
+
+  float bias1 = is_top_left(v2, v3) ? 0 : -1;
+  float bias2 = is_top_left(v3, v1) ? 0 : -1;
+  float bias3 = is_top_left(v1, v2) ? 0 : -1;
+
+  float area = burn_edge_cross_product(v1, v2, v3);
+
+  vec2f p = {x_min, y_min};
+  float w1_row = burn_edge_cross_product(v2, v3, p) + bias1;
+  float w2_row = burn_edge_cross_product(v3, v1, p) + bias2;
+  float w3_row = burn_edge_cross_product(v1, v2, p) + bias3;
+
+  for (i32 y = y_min; y <= y_max; y++) {
+    float w1 = w1_row;
+    float w2 = w2_row;
+    float w3 = w3_row;
+    for (i32 x = x_min; x <= x_max; x++) {
+      if (w1 >= 0 && w2 >= 0 && w3 >= 0)
+        if (x >= 0 && y >= 0 && x <= canvas.width && y <= canvas.height){
+          float z = w1/area + w2/area + w3/area;
+          float tx = tv1.x*w1/area + tv2.x*w2/area + tv3.x*w3/area;
+          float ty = tv1.y*w1/area + tv2.y*w2/area + tv3.y*w3/area;
+          float texture_x = tx/z*texture.width;
+          if (texture_x < 0) texture_x = 0;
+          if (texture_x >= texture.width) texture_x = texture.width - 1;
+          float texture_y = ty/z*texture.height;
+          if (texture_y < 0) texture_y = 0;
+          if (texture_y >= texture.height) texture_y = texture.height - 1;
+          BURN_PIXEL(canvas, x, y) = BURN_PIXEL(texture, (i32)texture_x, (i32)texture_y);
+        }
 
       w1 += delta_w1_col;
       w2 += delta_w2_col;

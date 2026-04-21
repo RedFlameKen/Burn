@@ -57,7 +57,6 @@ function render(w, ctx, dt) {
   const height = canvas.height
 
   const pixels = new Uint8ClampedArray(memory.buffer, pixels_offset, width * height * 4)
-  rgba_to_bgra(pixels)
 
   const image = new ImageData(pixels, width, height)
   ctx.canvas.width = width
