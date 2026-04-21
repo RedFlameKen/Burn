@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+:root {
+--gruvbox-bg:            #282828;
+--gruvbox-black:         #3c3836;
+--gruvbox-red:           #cc241d;
+--gruvbox-green:         #98971a;
+--gruvbox-yellow:        #d79921;
+--gruvbox-blue:          #458588;
+--gruvbox-magenta:       #b16286;
+--gruvbox-cyan:          #689d6a;
+--gruvbox-white:         #a89984;
+
+--gruvbox-light-black:   #928374;
+--gruvbox-light-red:     #fb4934;
+--gruvbox-light-green:   #b8bb26;
+--gruvbox-light-yellow:  #fabd2f;
+--gruvbox-light-blue:    #83a598;
+--gruvbox-light-magenta: #d3869b;
+--gruvbox-light-cyan:    #8ec07c;
+--gruvbox-light-white:   #fbf1c7;
+
+}
+
+body {
+  background-color: var(--gruvbox-black);
+}
+
+#demos_container {
+  width: 800px;
+  margin: auto;
+}
+
+.demo_canvas {
+  margin: auto;
+}
+
+h1,
+h2,
+p,
+a {
+  font-family: "JetBrains Mono", monospace;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+h1,
+h2,
+p {
+  color: var(--gruvbox-light-white);
+}
+
+a {
+  color: var(--gruvbox-light-green)
+}
+
+a:visited {
+  color: var(--gruvbox-green)
+}
+
+
+
+#page_header {
+  margin: auto;
+  font-size: 36pt;
+  text-align: center;
+}

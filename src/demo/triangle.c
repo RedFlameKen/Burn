@@ -15,7 +15,7 @@ BurnCanvas burn_render(float dt){
   };
 
   burn_fill(canvas, (Color){
-      .a = 0xFF,
+      .a = 0x00,
       });
 
   Color c1 = (Color){

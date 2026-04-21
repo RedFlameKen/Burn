@@ -4,14 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Burn Demo</title>
-    <!-- <link href="css/style.css" rel="stylesheet"> -->
+    <link href="css/style.css" rel="stylesheet">
   </head>
   <body>
-    <div id="div-triangle">
-      <canvas id="app-triangle"></canvas>
-    </div>
-    <div id="div-test">
-      <canvas id="app-test"></canvas>
+    <h1 id="page_header">Burn Demos</h1>
+    <div id="demos_container">
+      <h2>Triangle</h2>
+      <p>The traditional triangle with interpolated colors, rotating.</p>
+      <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle.c">src/demos/triangle.c</a></p>
+      <div id="div-triangle" class="demo_section">
+        <canvas id="app-triangle" class="demo_canvas"></canvas>
+      </div>
+      <div id="div-test" class="demo_section">
+        <canvas id="app-test" class="demo_canvas"></canvas>
+      </div>
     </div>
   </body>
   <script src="js/loader.js">
