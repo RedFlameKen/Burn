@@ -9,17 +9,23 @@
   <body>
     <h1 id="page_header">Burn Demos</h1>
     <div id="demos_container">
-      <h2>Triangle</h2>
-      <p>The traditional triangle with interpolated colors, rotating.</p>
-      <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle.c">src/demos/triangle.c</a></p>
       <div id="div-triangle" class="demo_section">
+        <h2>Triangle</h2>
+        <p>The traditional triangle with interpolated colors, rotating.</p>
+        <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle.c">src/demos/triangle.c</a></p>
         <canvas id="app-triangle" class="demo_canvas"></canvas>
       </div>
-      <h2>Stretching Textures</h2>
-      <p>A checkerboard texture stretching dynamically</p>
-      <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/sprite_resize.c">src/demos/sprite_resize.c</a></p>
       <div id="div-sprite_resize" class="demo_section">
+        <h2>Stretching Textures</h2>
+        <p>A checkerboard texture stretching dynamically</p>
+        <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/sprite_resize.c">src/demos/sprite_resize.c</a></p>
         <canvas id="app-sprite_resize" class="demo_canvas"></canvas>
+      </div>
+      <div id="div-triangle_textured" class="demo_section">
+        <h2>Textured Triangle</h2>
+        <p>A triangle with a checkerboard texture</p>
+        <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle_textured.c">src/demos/triangle_textured.c</a></p>
+        <canvas id="app-triangle_textured" class="demo_canvas"></canvas>
       </div>
       <div id="div-test" class="demo_section">
         <canvas id="app-test" class="demo_canvas"></canvas>
@@ -31,6 +37,7 @@
   <script>
     start("triangle", "bin/triangle.wasm")
     start("sprite_resize", "bin/sprite_resize.wasm")
+    start("triangle_textured", "bin/triangle_textured.wasm")
     start("test", "bin/test.wasm")
   </script>
 </html>
