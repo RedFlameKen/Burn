@@ -7,17 +7,17 @@
     <!-- <link href="css/style.css" rel="stylesheet"> -->
   </head>
   <body>
-    <div id="div-test">
-      <canvas id="app-test"></canvas>
-    </div>
     <div id="div-triangle">
       <canvas id="app-triangle"></canvas>
+    </div>
+    <div id="div-test">
+      <canvas id="app-test"></canvas>
     </div>
   </body>
   <script src="js/loader.js">
   </script>
   <script>
-    start("test", "bin/test.wasm")
     start("triangle", "bin/triangle.wasm")
+    start("test", "bin/test.wasm")
   </script>
 </html>

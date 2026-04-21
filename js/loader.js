@@ -8,6 +8,10 @@ const libs = {
   }
 };
 
+const FPS = 60.0
+const MILLIS_PER_SECOND = 1000.0
+const DELTA_TIME = MILLIS_PER_SECOND/FPS;
+
 async function start(canvasId, wasmPath) {
   const w = await WebAssembly.instantiateStreaming(fetch(wasmPath), libs)
   const app = document.getElementById(`app-${canvasId}`)
@@ -18,9 +22,10 @@ async function start(canvasId, wasmPath) {
   div.addEventListener("mouseenter", () => state.paused = false)
   div.addEventListener("mouseleave", () => state.paused = true)
 
-  prev_time = 0;
+  let prev_time = 0
+
   function loop(cur_time) {
-    const dt = cur_time - prev_time;
+    const dt = (cur_time - prev_time) / DELTA_TIME;
     prev_time = cur_time
     if (!state.paused) {
       render(w, ctx, dt)
@@ -31,14 +36,25 @@ async function start(canvasId, wasmPath) {
 
 }
 
+function getBurnCanvas(buffer, canvas_ptr){
+  const memory = new Uint32Array(buffer, canvas_ptr, 3)
+  return {
+    pixels: memory[0],
+    width:  memory[1],
+    height: memory[2],
+  }
+}
+
 function render(w, ctx, dt) {
   const memory = w.instance.exports.memory
-  const canvas_offset = w.instance.exports.burn_render(dt*0.001)
-  const view = new DataView(memory.buffer, canvas_offset, 12)
 
-  const pixels_offset = view.getInt32(0, true)
-  const width = view.getInt32(4, true)
-  const height = view.getInt32(8, true)
+  const heap_base = w.instance.exports.__heap_base.value
+  w.instance.exports.burn_render(heap_base, dt)
+  const canvas = getBurnCanvas(memory.buffer, heap_base)
+
+  const pixels_offset = canvas.pixels
+  const width = canvas.width
+  const height = canvas.height
 
   const pixels = new Uint8ClampedArray(memory.buffer, pixels_offset, width * height * 4)
   rgba_to_bgra(pixels)

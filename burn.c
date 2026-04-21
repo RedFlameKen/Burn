@@ -202,7 +202,7 @@ void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
     for (i32 x = x_min; x <= x_max; x++) {
 
       if (w1 >= 0 && w2 >= 0 && w3 >= 0){
-        if (x <= canvas.width && y <= canvas.height){
+        if (x >= 0 && y >= 0 && x <= canvas.width && y <= canvas.height){
           float alpha = w1 / area;
           float beta  = w2 / area;
           float gamma = w3 / area;
@@ -258,7 +258,7 @@ void burn_fill_triangle(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
     float w3 = w3_row;
     for (i32 x = x_min; x <= x_max; x++) {
       if (w1 >= 0 && w2 >= 0 && w3 >= 0)
-        if (x <= canvas.width && y <= canvas.height)
+        if (x >= 0 && y >= 0 && x <= canvas.width && y <= canvas.height)
           BURN_PIXEL(canvas, x, y) = color;
 
       w1 += delta_w1_col;

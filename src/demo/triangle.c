@@ -5,9 +5,9 @@ static Color pixels[DEFAULT_WIDTH * DEFAULT_HEIGHT] = {0};
 #define PI 3.14159265
 
 static float angle = 0;
-// TODO: Triangle is only white in html
+
 BurnCanvas burn_render(float dt){
-  angle += 0.25*PI*(dt*0.01);
+  angle += 0.5*PI*(dt*0.01);
   BurnCanvas canvas = (BurnCanvas){
     .pixels = pixels,
     .width = DEFAULT_WIDTH,
@@ -39,14 +39,15 @@ BurnCanvas burn_render(float dt){
       .b = 0xFF
       };
 
-  vec2f v1 = (vec2f){ .x = 150, .y = 50 };
-  vec2f v2 = (vec2f){ .x = 50, .y = 300 };
-  vec2f v3 = (vec2f){ .x = 400, .y = 350 };
+  vec2f v1 = (vec2f){ .x = 250, .y = 75 };
+  vec2f v2 = (vec2f){ .x = 150, .y = 375 };
+  vec2f v3 = (vec2f){ .x = 600, .y = 425 };
 
   vec2f center = (vec2f){
     .x = (v1.x + v2.x + v3.x) / 3,
     .y = (v1.y + v2.y + v3.y) / 3
   };
+
   v1 = burn_rotate_2d(v1, center, angle);
   v2 = burn_rotate_2d(v2, center, angle);
   v3 = burn_rotate_2d(v3, center, angle);
