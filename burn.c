@@ -57,6 +57,8 @@ void burn_draw_rect2(BurnCanvas canvas, Rect rect, Color color);
 void burn_fill(BurnCanvas canvas, Color color);
 void burn_fill_rect(BurnCanvas canvas, i32 x, i32 y, i32 w, i32 h, Color color);
 void burn_fill_rect2(BurnCanvas canvas, Rect rect, Color color);
+void burn_sprite_copy(BurnCanvas canvas, i32 ox, i32 oy, i32 w, i32 h,
+                      BurnCanvas sprite);
 void burn_fill_triangle(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
                         Color color);
 void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
@@ -136,6 +138,24 @@ void burn_fill_rect(BurnCanvas canvas, i32 x, i32 y, i32 w, i32 h,
     for (i32 j = x; j < x + w; j++) {
       if (j < canvas.width && i < canvas.height) {
         BURN_PIXEL(canvas, j, i) = color;
+      }
+    }
+  }
+}
+
+void burn_sprite_copy(BurnCanvas canvas, i32 ox, i32 oy, i32 w, i32 h,
+                      BurnCanvas sprite) {
+  i32 x_min = ox;
+  i32 y_min = oy;
+  i32 x_max = ox + w;
+  i32 y_max = oy + h;
+
+  for (i32 y = y_min; y <= y_max; y++) {
+    for (i32 x = x_min; x <= x_max; x++) {
+      i32 nx = (x - ox)*(sprite.width)/w;
+      i32 ny = (y - oy)*(sprite.height)/h;
+      if (nx > 0 && ny > 0 && nx < x_max && ny < y_max) {
+        BURN_PIXEL(canvas, x, y) = BURN_PIXEL(sprite, nx, ny);
       }
     }
   }

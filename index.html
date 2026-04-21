@@ -15,6 +15,12 @@
       <div id="div-triangle" class="demo_section">
         <canvas id="app-triangle" class="demo_canvas"></canvas>
       </div>
+      <h2>Stretching Textures</h2>
+      <p>A checkerboard texture stretching dynamically</p>
+      <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/sprite_resize.c">src/demos/sprite_resize.c</a></p>
+      <div id="div-sprite_resize" class="demo_section">
+        <canvas id="app-sprite_resize" class="demo_canvas"></canvas>
+      </div>
       <div id="div-test" class="demo_section">
         <canvas id="app-test" class="demo_canvas"></canvas>
       </div>
@@ -24,6 +30,7 @@
   </script>
   <script>
     start("triangle", "bin/triangle.wasm")
+    start("sprite_resize", "bin/sprite_resize.wasm")
     start("test", "bin/test.wasm")
   </script>
 </html>
