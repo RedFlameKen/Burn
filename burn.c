@@ -49,6 +49,12 @@ typedef struct {
   i32 z;
 } vec3;
 
+typedef struct {
+  float x;
+  float y;
+  float z;
+} vec3f;
+
 BurnCanvas burn_create_canvas(Color *pixels, u32 width, u32 height);
 void burn_draw_line(BurnCanvas canvas, i32 x1, i32 y1, i32 x2, i32 y2,
                     Color color);
@@ -64,6 +70,8 @@ void burn_fill_triangle(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
 void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
                         Color c1, Color c2, Color c3);
 vec2f burn_rotate_2d(vec2f point, vec2f center, float angle);
+vec2f burn_project_to_2d(vec3f point);
+vec2f burn_to_screen(BurnCanvas canvas, vec2f point);
 
 #define BURN_IMPLEMENTATION
 #ifdef BURN_IMPLEMENTATION
@@ -357,6 +365,57 @@ vec2f burn_rotate_2d(vec2f point, vec2f center, float angle){
   rotated.x += center.x;
   rotated.y += center.y;
   return rotated;
+}
+
+vec3f burn_rotate_xz(vec3f point, float angle){
+  return (vec3f){
+    .x = (point.x * cosf(angle)) - (point.z * sinf(angle)),
+    .y = point.y,
+    .z = (point.x * sinf(angle)) + (point.z * cosf(angle)),
+  };
+}
+
+vec3f burn_rotate_xy(vec3f point, float angle){
+  return (vec3f){
+    .x = (point.x * cosf(angle)) - (point.y * sinf(angle)),
+    .y = (point.x * sinf(angle)) + (point.y * cosf(angle)),
+    .z = point.z,
+  };
+}
+
+vec3f burn_rotate_yz(vec3f point, float angle){
+  return (vec3f){
+    .x = point.x,
+    .y = (point.y * cosf(angle)) - (point.z * sinf(angle)),
+    .z = (point.y * sinf(angle)) + (point.z * cosf(angle)),
+  };
+}
+
+vec3f burn_translate_z(vec3f point, float dz){
+  return (vec3f){.x = point.x, .y = point.y, .z = point.z+dz};
+}
+
+vec2f burn_project_to_2d(vec3f point){
+  float x, y;
+
+  if (point.z > 0){
+    x = point.x / point.z;
+    y = point.y / point.z;
+  } else {
+    x = point.x;
+    y = point.y;
+  }
+  return (vec2f){
+    .x = x,
+    .y = y,
+  };
+}
+
+vec2f burn_to_screen(BurnCanvas canvas, vec2f point){
+  return (vec2f){
+    .x = (1 - (point.x + 1)/2) * canvas.width,
+    .y = (1 - (point.y + 1)/2) * canvas.height,
+  };
 }
 
 #endif
