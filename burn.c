@@ -391,6 +391,14 @@ vec3f burn_rotate_yz(vec3f point, float angle){
   };
 }
 
+vec3f burn_translate_x(vec3f point, float dx){
+  return (vec3f){.x = point.x+dx, .y = point.y, .z = point.z};
+}
+
+vec3f burn_translate_y(vec3f point, float dy){
+  return (vec3f){.x = point.x, .y = point.y+dy, .z = point.z};
+}
+
 vec3f burn_translate_z(vec3f point, float dz){
   return (vec3f){.x = point.x, .y = point.y, .z = point.z+dz};
 }
