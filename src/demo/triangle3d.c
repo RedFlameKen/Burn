@@ -1,37 +1,11 @@
 #include "../loader.c"
+#include "points.c"
 
 static Color pixels[DEFAULT_WIDTH * DEFAULT_HEIGHT] = {0};
 
 #define PI 3.14159265
 
 static float angle = 0;
-
-static vec3f cube_points[8] = {
-  {.x = 0.25,  .y = 0.25,   .z = 0.25},
-  {.x = 0.25,  .y = -0.25,  .z = 0.25},
-  {.x = -0.25, .y = -0.25,  .z = 0.25},
-  {.x = -0.25, .y = 0.25,   .z = 0.25},
-  {.x = 0.25,  .y = 0.25,   .z = -0.25},
-  {.x = 0.25,  .y = -0.25,  .z = -0.25},
-  {.x = -0.25, .y = -0.25,  .z = -0.25},
-  {.x = -0.25, .y = 0.25,   .z = -0.25},
-};
-
-static i32 cube_faces[][3] = {
-  {0, 2, 1},
-  {0, 3, 2},
-  {4, 5, 6},
-  {4, 6, 7},
-  {0, 1, 5},
-  {0, 5, 4},
-  {3, 6, 2},
-  {3, 7, 6},
-  {2, 6, 5},
-  {1, 2, 5},
-  {0, 4, 3},
-  {3, 4, 7},
-};
-
 
 BurnCanvas burn_render(float dt){
   angle += 0.5*PI*(dt*0.01);

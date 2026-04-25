@@ -33,6 +33,12 @@
         <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle3d.c">src/demos/triangle3d.c</a></p>
         <canvas id="app-triangle3d" class="demo_canvas"></canvas>
       </div>
+      <div id="div-triangle3d_textured" class="demo_section">
+        <h2>3D Textured Triangles</h2>
+        <p>A 3D rotating cube made up of triangles with an ugly grass block texture</p>
+        <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle3d_textured.c">src/demos/triangle3d_textured.c</a></p>
+        <canvas id="app-triangle3d_textured" class="demo_canvas"></canvas>
+      </div>
     </div>
   </body>
   <script src="js/loader.js">
@@ -42,5 +48,6 @@
     start("sprite_resize", "bin/sprite_resize.wasm")
     start("triangle_textured", "bin/triangle_textured.wasm")
     start("triangle3d", "bin/triangle3d.wasm")
+    start("triangle3d_textured", "bin/triangle3d_textured.wasm")
   </script>
 </html>
