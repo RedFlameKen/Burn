@@ -532,9 +532,9 @@ BurnCanvas burn_render(float dt) {
     b = burn_rotate_xz(b, angle);
     c = burn_rotate_xz(c, angle);
 
-    a = burn_rotate_yz(a, -0.15 * PI);
-    b = burn_rotate_yz(b, -0.15 * PI);
-    c = burn_rotate_yz(c, -0.15 * PI);
+    a = burn_rotate_yz(a, angle);
+    b = burn_rotate_yz(b, angle);
+    c = burn_rotate_yz(c, angle);
 
     a = burn_translate_z(a, 1);
     b = burn_translate_z(b, 1);
