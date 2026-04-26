@@ -1,8 +1,6 @@
 #ifndef LOADER_C
 #define LOADER_C
 
-#include <SDL3/SDL_pixels.h>
-#include <time.h>
 #define BURN_IMPLEMENTATION
 #include "../burn.c"
 
@@ -29,6 +27,7 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_oldnames.h>
 #include <stdio.h>
+#include <SDL3/SDL_pixels.h>
 
 #define TIME_IMPLEMENTATION
 #include "util/time.c"

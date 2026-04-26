@@ -29,7 +29,7 @@ static vec2f cube_uv[12] = {
     { .x = 0.25, .y = 0.3333, },
     { .x = 0.25, .y = 0, },
 
-    { .x = 0.5 , .y = 0.3333 , },
+    { .x = 0.5 , .y = 0.3333, },
     { .x = 0.5 , .y = 0.6666, },
     { .x = 0.25, .y = 0.6666, },
     { .x = 0.25, .y = 0.3333, },
@@ -544,8 +544,16 @@ BurnCanvas burn_render(float dt) {
     vec2f v2 = burn_to_screen(canvas, burn_project_to_2d(b));
     vec2f v3 = burn_to_screen(canvas, burn_project_to_2d(c));
 
+    uv1.x /= a.z;
+    uv2.x /= b.z;
+    uv3.x /= c.z;
+    uv1.y /= a.z;
+    uv2.y /= b.z;
+    uv3.y /= c.z;
+
     if (a.z > 0.1 && b.z > 0.1 && c.z > 0.1) {
-      burn_draw_triangle_textured(canvas, v1, v2, v3, uv1, uv2, uv3,
+      burn_draw_triangle_textured(canvas, v1, v2, v3, uv1, uv2, uv3, 1 / a.z,
+                                  1 / b.z, 1 / c.z,
                                   (BurnCanvas){texture, 64, 48});
     }
   }

@@ -80,6 +80,7 @@ BurnCanvas burn_render(float dt){
   v2 = burn_rotate_2d(v2, center, angle);
   v3 = burn_rotate_2d(v3, center, angle);
   burn_draw_triangle_textured(canvas, v1, v2, v3, t1, t2, t3,
+                                 1, 1, 1,
                               (BurnCanvas){
                                   .pixels = texture,
                                   .width = sprite_width,

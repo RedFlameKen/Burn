@@ -219,7 +219,7 @@ void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
 
   float area = burn_edge_cross_product(v1, v2, v3);
 
-  vec2f p = {x_min, y_min};
+  vec2f p = {x_min + 0.5, y_min + 0.5};
   float w1_row = burn_edge_cross_product(v2, v3, p) + bias1;
   float w2_row = burn_edge_cross_product(v3, v1, p) + bias2;
   float w3_row = burn_edge_cross_product(v1, v2, p) + bias3;
@@ -276,7 +276,7 @@ void burn_fill_triangle(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
   float bias2 = is_top_left(v3, v1) ? 0 : -1;
   float bias3 = is_top_left(v1, v2) ? 0 : -1;
 
-  vec2f p = {x_min, y_min};
+  vec2f p = {x_min + 0.5, y_min + 0.5};
   float w1_row = burn_edge_cross_product(v2, v3, p) + bias1;
   float w2_row = burn_edge_cross_product(v3, v1, p) + bias2;
   float w3_row = burn_edge_cross_product(v1, v2, p) + bias3;
@@ -302,6 +302,7 @@ void burn_fill_triangle(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
 
 void burn_draw_triangle_textured(BurnCanvas canvas, vec2f v1, vec2f v2,
                                  vec2f v3, vec2f tv1, vec2f tv2, vec2f tv3,
+                                 float z1, float z2, float z3,
                                  BurnCanvas texture) {
   i32 x_min = BURN_MIN(BURN_MIN(v1.x, v2.x), v3.x);
   i32 y_min = BURN_MIN(BURN_MIN(v1.y, v2.y), v3.y);
@@ -316,13 +317,13 @@ void burn_draw_triangle_textured(BurnCanvas canvas, vec2f v1, vec2f v2,
   float delta_w2_row = (v3.x - v1.x);
   float delta_w3_row = (v1.x - v2.x);
 
-  float bias1 = is_top_left(v2, v3) ? 0 : -1;
-  float bias2 = is_top_left(v3, v1) ? 0 : -1;
-  float bias3 = is_top_left(v1, v2) ? 0 : -1;
+  float bias1 = is_top_left(v2, v3) ? 0 : -0.0001;
+  float bias2 = is_top_left(v3, v1) ? 0 : -0.0001;
+  float bias3 = is_top_left(v1, v2) ? 0 : -0.0001;
 
   float area = burn_edge_cross_product(v1, v2, v3);
 
-  vec2f p = {x_min, y_min};
+  vec2f p = {x_min + 0.5, y_min + 0.5};
   float w1_row = burn_edge_cross_product(v2, v3, p) + bias1;
   float w2_row = burn_edge_cross_product(v3, v1, p) + bias2;
   float w3_row = burn_edge_cross_product(v1, v2, p) + bias3;
@@ -334,7 +335,7 @@ void burn_draw_triangle_textured(BurnCanvas canvas, vec2f v1, vec2f v2,
     for (i32 x = x_min; x <= x_max; x++) {
       if (w1 >= 0 && w2 >= 0 && w3 >= 0)
         if (x >= 0 && y >= 0 && x <= canvas.width && y <= canvas.height){
-          float z = w1/area + w2/area + w3/area;
+          float z = z1*w1/area + z2*w2/area + z3*w3/area;
           float tx = tv1.x*w1/area + tv2.x*w2/area + tv3.x*w3/area;
           float ty = tv1.y*w1/area + tv2.y*w2/area + tv3.y*w3/area;
           float texture_x = tx/z*texture.width;
