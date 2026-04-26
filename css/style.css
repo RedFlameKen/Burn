@@ -50,12 +50,16 @@ p {
   color: var(--gruvbox-light-white);
 }
 
+p {
+  text-align: justify;
+}
+
 a {
-  color: var(--gruvbox-light-green)
+  color: var(--gruvbox-light-blue)
 }
 
 a:visited {
-  color: var(--gruvbox-green)
+  color: var(--gruvbox-blue)
 }
 
 

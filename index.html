@@ -1,53 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Burn Demo</title>
     <link href="css/style.css" rel="stylesheet">
-  </head>
-  <body>
+</head>
+
+<body>
     <h1 id="page_header">Burn Demos</h1>
     <div id="demos_container">
-      <div id="div-triangle" class="demo_section">
-        <h2>Triangle</h2>
-        <p>The traditional triangle with interpolated colors, rotating.</p>
-        <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle.c">src/demos/triangle.c</a></p>
-        <canvas id="app-triangle" class="demo_canvas"></canvas>
-      </div>
-      <div id="div-sprite_resize" class="demo_section">
-        <h2>Stretching Textures</h2>
-        <p>A checkerboard texture stretching dynamically</p>
-        <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/sprite_resize.c">src/demos/sprite_resize.c</a></p>
-        <canvas id="app-sprite_resize" class="demo_canvas"></canvas>
-      </div>
-      <div id="div-triangle_textured" class="demo_section">
-        <h2>Textured Triangle</h2>
-        <p>A triangle with a checkerboard texture</p>
-        <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle_textured.c">src/demos/triangle_textured.c</a></p>
-        <canvas id="app-triangle_textured" class="demo_canvas"></canvas>
-      </div>
-      <div id="div-triangle3d" class="demo_section">
-        <h2>3D Triangles</h2>
-        <p>A 3D rotating cube made up of triangles</p>
-        <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle3d.c">src/demos/triangle3d.c</a></p>
-        <canvas id="app-triangle3d" class="demo_canvas"></canvas>
-      </div>
-      <div id="div-triangle3d_textured" class="demo_section">
-        <h2>3D Textured Triangles</h2>
-        <p>A 3D rotating cube made up of triangles with an ugly grass block texture</p>
-        <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle3d_textured.c">src/demos/triangle3d_textured.c</a></p>
-        <canvas id="app-triangle3d_textured" class="demo_canvas"></canvas>
-      </div>
+        <div id="description_section">
+            <p>
+                Burn is a 2D/3D graphics library written in C that "Creatively Burns" pixels
+                onto your screen. It rasterizes images and 3D objects pixel by pixel on the
+                CPU, and avoids the use of Graphics APIs like OpenGL, Vulkan, etc. This website
+                contains various demos of the library, displayed using WebAssembly (WASM).
+            </p>
+            <p>
+                This library's source code is available here:
+                <a href="https://codeberg.org/RedFlameKen/Burn">https://codeberg.org/RedFlameKen/Burn</a>
+            </p>
+        </div>
+        <div id="div-triangle" class="demo_section">
+            <h2>Triangle</h2>
+            <p>The traditional triangle with interpolated colors, rotating.</p>
+            <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle.c">src/demos/triangle.c</a>
+            </p>
+            <canvas id="app-triangle" class="demo_canvas"></canvas>
+        </div>
+        <div id="div-sprite_resize" class="demo_section">
+            <h2>Stretching Textures</h2>
+            <p>A checkerboard texture stretching dynamically</p>
+            <p>Source: <a
+                    href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/sprite_resize.c">src/demos/sprite_resize.c</a>
+            </p>
+            <canvas id="app-sprite_resize" class="demo_canvas"></canvas>
+        </div>
+        <div id="div-triangle_textured" class="demo_section">
+            <h2>Textured Triangle</h2>
+            <p>A triangle with a checkerboard texture</p>
+            <p>Source: <a
+                    href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle_textured.c">src/demos/triangle_textured.c</a>
+            </p>
+            <canvas id="app-triangle_textured" class="demo_canvas"></canvas>
+        </div>
+        <div id="div-triangle3d" class="demo_section">
+            <h2>3D Triangles</h2>
+            <p>A 3D rotating cube made up of triangles</p>
+            <p>Source: <a
+                    href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle3d.c">src/demos/triangle3d.c</a>
+            </p>
+            <canvas id="app-triangle3d" class="demo_canvas"></canvas>
+        </div>
+        <div id="div-triangle3d_textured" class="demo_section">
+            <h2>3D Textured Triangles</h2>
+            <p>A 3D rotating cube made up of triangles with an ugly grass block texture</p>
+            <p>Source: <a
+                    href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/triangle3d_textured.c">src/demos/triangle3d_textured.c</a>
+            </p>
+            <canvas id="app-triangle3d_textured" class="demo_canvas"></canvas>
+        </div>
     </div>
-  </body>
-  <script src="js/loader.js">
-  </script>
-  <script>
+</body>
+<script src="js/loader.js">
+</script>
+<script>
     start("triangle", "bin/triangle.wasm")
     start("sprite_resize", "bin/sprite_resize.wasm")
     start("triangle_textured", "bin/triangle_textured.wasm")
     start("triangle3d", "bin/triangle3d.wasm")
     start("triangle3d_textured", "bin/triangle3d_textured.wasm")
-  </script>
+</script>
+
 </html>
