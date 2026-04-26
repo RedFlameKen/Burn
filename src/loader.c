@@ -1,6 +1,8 @@
 #ifndef LOADER_C
 #define LOADER_C
 
+#include <SDL3/SDL_pixels.h>
+#include <time.h>
 #define BURN_IMPLEMENTATION
 #include "../burn.c"
 
@@ -52,12 +54,18 @@ void sdl_render(Display *display, float dt){
   BurnCanvas canvas = burn_render(dt);
   Color *pixels = (Color*)display->surface->pixels;
 
+  SDL_LockSurface(display->surface);
   for (int i = 0; i < canvas.height; i++) {
     for (int j = 0; j < canvas.width; j++) {
       Color color = BURN_PIXEL(canvas, j, i);
+      u8 temp = color.r;
+      color.r = color.b;
+      color.b = temp;
       pixels[i * canvas.width + j] = color;
     }
   }
+  SDL_UnlockSurface(display->surface);
+  SDL_UpdateWindowSurface(display->window);
 
 }
 
@@ -87,11 +95,10 @@ void sdl_loop(Display *display){
           display->running = 0;
         }
       }
-      sdl_render(display, dt);
       // burn_update(dt);
+      sdl_render(display, dt);
       dt--;
       frames++;
-      SDL_UpdateWindowSurface(display->window);
     }
 
     cur_check = current_time_millis();
@@ -116,6 +123,7 @@ int sdl_open_window(Display *display){
     fprintf(stderr, "Unable to create window: %s\n", SDL_GetError());
     return -1;
   }
+
 
   if (!(display->surface = SDL_GetWindowSurface(display->window))) {
     fprintf(stderr, "Unable to get window surface: %s\n", SDL_GetError());
