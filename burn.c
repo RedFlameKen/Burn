@@ -68,10 +68,12 @@ void burn_sprite_copy(BurnCanvas canvas, i32 ox, i32 oy, i32 w, i32 h,
 void burn_fill_triangle(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
                         Color color);
 void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
-                        Color c1, Color c2, Color c3);
+                          Color c1, Color c2, Color c3);
 vec2f burn_rotate_2d(vec2f point, vec2f center, float angle);
 vec2f burn_project_to_2d(vec3f point);
 vec2f burn_to_screen(BurnCanvas canvas, vec2f point);
+void burn_draw_circle(BurnCanvas canvas, i32 x, i32 y, float radius,
+                      Color color);
 
 #define BURN_IMPLEMENTATION
 #ifdef BURN_IMPLEMENTATION
@@ -160,8 +162,8 @@ void burn_sprite_copy(BurnCanvas canvas, i32 ox, i32 oy, i32 w, i32 h,
 
   for (i32 y = y_min; y <= y_max; y++) {
     for (i32 x = x_min; x <= x_max; x++) {
-      i32 nx = (x - ox)*(sprite.width)/w;
-      i32 ny = (y - oy)*(sprite.height)/h;
+      i32 nx = (x - ox) * (sprite.width) / w;
+      i32 ny = (y - oy) * (sprite.height) / h;
       if (nx > 0 && ny > 0 && nx < x_max && ny < y_max) {
         BURN_PIXEL(canvas, x, y) = BURN_PIXEL(sprite, nx, ny);
       }
@@ -179,8 +181,70 @@ void burn_fill_rect2(BurnCanvas canvas, Rect rect, Color color) {
   }
 }
 
-float is_top_left(vec2f start, vec2f end){
-  vec2f edge = { end.x - start.x, end.y - start.y };
+void burn_draw_circle_pixels(BurnCanvas canvas, i32 cx, i32 cy, i32 x, i32 y,
+                             Color color) {
+  BURN_PIXEL(canvas, cx + x, cy + y) = color;
+  BURN_PIXEL(canvas, cx - x, cy + y) = color;
+  BURN_PIXEL(canvas, cx + x, cy - y) = color;
+  BURN_PIXEL(canvas, cx - x, cy - y) = color;
+  BURN_PIXEL(canvas, cx + y, cy + x) = color;
+  BURN_PIXEL(canvas, cx - y, cy + x) = color;
+  BURN_PIXEL(canvas, cx + y, cy - x) = color;
+  BURN_PIXEL(canvas, cx - y, cy - x) = color;
+}
+
+void burn_draw_circle_pixels_filled(BurnCanvas canvas, i32 cx, i32 cy, i32 x, i32 y,
+                             Color color) {
+  burn_draw_line(canvas, cx - x, cy + y, cx + x, cy + y, color);
+  burn_draw_line(canvas, cx - x, cy - y, cx + x, cy - y, color);
+  burn_draw_line(canvas, cx - y, cy + x, cx + y, cy + x, color);
+  burn_draw_line(canvas, cx - y, cy - x, cx + y, cy - x, color);
+}
+
+void burn_draw_circle(BurnCanvas canvas, i32 cx, i32 cy, float r, Color color) {
+  i32 x = 0;
+  i32 y = -r;
+  i32 p = -r;
+
+  while (x < -y) {
+    if (p > 0) {
+      y++;
+      p += 2 * (x + y) + 1;
+    } else {
+      p += 2 * x + 1;
+    }
+    float y_mid = y + 0.5;
+    if (x * x + y_mid * y_mid > r * r) {
+      y++;
+    }
+    burn_draw_circle_pixels(canvas, cx, cy, x, y, color);
+    x++;
+  }
+}
+
+void burn_draw_circle_filled(BurnCanvas canvas, i32 cx, i32 cy, float r, Color color) {
+  i32 x = 0;
+  i32 y = -r;
+  i32 p = -r;
+
+  while (x < -y) {
+    if (p > 0) {
+      y++;
+      p += 2 * (x + y) + 1;
+    } else {
+      p += 2 * x + 1;
+    }
+    float y_mid = y + 0.5;
+    if (x * x + y_mid * y_mid > r * r) {
+      y++;
+    }
+    burn_draw_circle_pixels_filled(canvas, cx, cy, x, y, color);
+    x++;
+  }
+}
+
+float is_top_left(vec2f start, vec2f end) {
+  vec2f edge = {end.x - start.x, end.y - start.y};
 
   float is_top_edge = edge.y == 0 && edge.x > 0;
   float is_left_edge = edge.y < 0;
@@ -189,17 +253,18 @@ float is_top_left(vec2f start, vec2f end){
 }
 
 float burn_edge_cross_product(vec2f a, vec2f b, vec2f p) {
-  vec2f ab = { b.y - a.y, b.x - a.x };
-  vec2f ap = { p.y - a.y, p.x - a.x };
+  vec2f ab = {b.y - a.y, b.x - a.x};
+  vec2f ap = {p.y - a.y, p.x - a.x};
   return ab.x * ap.y - ap.x * ab.y;
 }
 
-u8 burn_interpolate_color(float alpha, float beta, float gamma, u8 c1, u8 c2, u8 c3){
-  return (alpha) * c1 + (beta) * c2 + (gamma) * c3;
+u8 burn_interpolate_color(float alpha, float beta, float gamma, u8 c1, u8 c2,
+                          u8 c3) {
+  return (alpha)*c1 + (beta)*c2 + (gamma)*c3;
 }
 
 void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
-                        Color c1, Color c2, Color c3) {
+                          Color c1, Color c2, Color c3) {
   i32 x_min = BURN_MIN(BURN_MIN(v1.x, v2.x), v3.x);
   i32 y_min = BURN_MIN(BURN_MIN(v1.y, v2.y), v3.y);
   i32 x_max = BURN_MAX(BURN_MAX(v1.x, v2.x), v3.x);
@@ -230,10 +295,10 @@ void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
     float w3 = w3_row;
     for (i32 x = x_min; x <= x_max; x++) {
 
-      if (w1 >= 0 && w2 >= 0 && w3 >= 0){
-        if (x >= 0 && y >= 0 && x <= canvas.width && y <= canvas.height){
+      if (w1 >= 0 && w2 >= 0 && w3 >= 0) {
+        if (x >= 0 && y >= 0 && x <= canvas.width && y <= canvas.height) {
           float alpha = w1 / area;
-          float beta  = w2 / area;
+          float beta = w2 / area;
           float gamma = w3 / area;
 
           u8 a = burn_interpolate_color(alpha, beta, gamma, c1.a, c2.a, c3.a);
@@ -241,7 +306,7 @@ void burn_fill_triangle3c(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
           u8 g = burn_interpolate_color(alpha, beta, gamma, c1.g, c2.g, c3.g);
           u8 b = burn_interpolate_color(alpha, beta, gamma, c1.b, c2.b, c3.b);
 
-          Color color = (Color) { .a = a, .r = r, .g = g, .b = b };
+          Color color = (Color){.a = a, .r = r, .g = g, .b = b};
 
           BURN_PIXEL(canvas, x, y) = color;
         }
@@ -262,7 +327,6 @@ void burn_fill_triangle(BurnCanvas canvas, vec2f v1, vec2f v2, vec2f v3,
   i32 y_min = BURN_MIN(BURN_MIN(v1.y, v2.y), v3.y);
   i32 x_max = BURN_MAX(BURN_MAX(v1.x, v2.x), v3.x);
   i32 y_max = BURN_MAX(BURN_MAX(v1.y, v2.y), v3.y);
-
 
   float delta_w1_col = (v3.y - v2.y);
   float delta_w2_col = (v1.y - v3.y);
@@ -334,17 +398,22 @@ void burn_draw_triangle_textured(BurnCanvas canvas, vec2f v1, vec2f v2,
     float w3 = w3_row;
     for (i32 x = x_min; x <= x_max; x++) {
       if (w1 >= 0 && w2 >= 0 && w3 >= 0)
-        if (x >= 0 && y >= 0 && x <= canvas.width && y <= canvas.height){
-          float z = z1*w1/area + z2*w2/area + z3*w3/area;
-          float tx = tv1.x*w1/area + tv2.x*w2/area + tv3.x*w3/area;
-          float ty = tv1.y*w1/area + tv2.y*w2/area + tv3.y*w3/area;
-          float texture_x = tx/z*texture.width;
-          if (texture_x < 0) texture_x = 0;
-          if (texture_x >= texture.width) texture_x = texture.width - 1;
-          float texture_y = ty/z*texture.height;
-          if (texture_y < 0) texture_y = 0;
-          if (texture_y >= texture.height) texture_y = texture.height - 1;
-          BURN_PIXEL(canvas, x, y) = BURN_PIXEL(texture, (i32)texture_x, (i32)texture_y);
+        if (x >= 0 && y >= 0 && x <= canvas.width && y <= canvas.height) {
+          float z = z1 * w1 / area + z2 * w2 / area + z3 * w3 / area;
+          float tx = tv1.x * w1 / area + tv2.x * w2 / area + tv3.x * w3 / area;
+          float ty = tv1.y * w1 / area + tv2.y * w2 / area + tv3.y * w3 / area;
+          float texture_x = tx / z * texture.width;
+          if (texture_x < 0)
+            texture_x = 0;
+          if (texture_x >= texture.width)
+            texture_x = texture.width - 1;
+          float texture_y = ty / z * texture.height;
+          if (texture_y < 0)
+            texture_y = 0;
+          if (texture_y >= texture.height)
+            texture_y = texture.height - 1;
+          BURN_PIXEL(canvas, x, y) =
+              BURN_PIXEL(texture, (i32)texture_x, (i32)texture_y);
         }
 
       w1 += delta_w1_col;
@@ -357,7 +426,7 @@ void burn_draw_triangle_textured(BurnCanvas canvas, vec2f v1, vec2f v2,
   }
 }
 
-vec2f burn_rotate_2d(vec2f point, vec2f center, float angle){
+vec2f burn_rotate_2d(vec2f point, vec2f center, float angle) {
   vec2f rotated;
   point.x -= center.x;
   point.y -= center.y;
@@ -368,46 +437,46 @@ vec2f burn_rotate_2d(vec2f point, vec2f center, float angle){
   return rotated;
 }
 
-vec3f burn_rotate_xz(vec3f point, float angle){
+vec3f burn_rotate_xz(vec3f point, float angle) {
   return (vec3f){
-    .x = (point.x * cosf(angle)) - (point.z * sinf(angle)),
-    .y = point.y,
-    .z = (point.x * sinf(angle)) + (point.z * cosf(angle)),
+      .x = (point.x * cosf(angle)) - (point.z * sinf(angle)),
+      .y = point.y,
+      .z = (point.x * sinf(angle)) + (point.z * cosf(angle)),
   };
 }
 
-vec3f burn_rotate_xy(vec3f point, float angle){
+vec3f burn_rotate_xy(vec3f point, float angle) {
   return (vec3f){
-    .x = (point.x * cosf(angle)) - (point.y * sinf(angle)),
-    .y = (point.x * sinf(angle)) + (point.y * cosf(angle)),
-    .z = point.z,
+      .x = (point.x * cosf(angle)) - (point.y * sinf(angle)),
+      .y = (point.x * sinf(angle)) + (point.y * cosf(angle)),
+      .z = point.z,
   };
 }
 
-vec3f burn_rotate_yz(vec3f point, float angle){
+vec3f burn_rotate_yz(vec3f point, float angle) {
   return (vec3f){
-    .x = point.x,
-    .y = (point.y * cosf(angle)) - (point.z * sinf(angle)),
-    .z = (point.y * sinf(angle)) + (point.z * cosf(angle)),
+      .x = point.x,
+      .y = (point.y * cosf(angle)) - (point.z * sinf(angle)),
+      .z = (point.y * sinf(angle)) + (point.z * cosf(angle)),
   };
 }
 
-vec3f burn_translate_x(vec3f point, float dx){
-  return (vec3f){.x = point.x+dx, .y = point.y, .z = point.z};
+vec3f burn_translate_x(vec3f point, float dx) {
+  return (vec3f){.x = point.x + dx, .y = point.y, .z = point.z};
 }
 
-vec3f burn_translate_y(vec3f point, float dy){
-  return (vec3f){.x = point.x, .y = point.y+dy, .z = point.z};
+vec3f burn_translate_y(vec3f point, float dy) {
+  return (vec3f){.x = point.x, .y = point.y + dy, .z = point.z};
 }
 
-vec3f burn_translate_z(vec3f point, float dz){
-  return (vec3f){.x = point.x, .y = point.y, .z = point.z+dz};
+vec3f burn_translate_z(vec3f point, float dz) {
+  return (vec3f){.x = point.x, .y = point.y, .z = point.z + dz};
 }
 
-vec2f burn_project_to_2d(vec3f point){
+vec2f burn_project_to_2d(vec3f point) {
   float x, y;
 
-  if (point.z > 0){
+  if (point.z > 0) {
     x = point.x / point.z;
     y = point.y / point.z;
   } else {
@@ -415,19 +484,18 @@ vec2f burn_project_to_2d(vec3f point){
     y = point.y;
   }
   return (vec2f){
-    .x = x,
-    .y = y,
+      .x = x,
+      .y = y,
   };
 }
 
-vec2f burn_to_screen(BurnCanvas canvas, vec2f point){
+vec2f burn_to_screen(BurnCanvas canvas, vec2f point) {
   return (vec2f){
-    .x = (1 - (point.x + 1)/2) * canvas.width,
-    .y = (1 - (point.y + 1)/2) * canvas.height,
+      .x = (1 - (point.x + 1) / 2) * canvas.width,
+      .y = (1 - (point.y + 1) / 2) * canvas.height,
   };
 }
 
 #endif
 
 #endif
-

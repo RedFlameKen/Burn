@@ -30,6 +30,13 @@
             </p>
             <canvas id="app-triangle" class="demo_canvas"></canvas>
         </div>
+        <div id="div-circle" class="demo_section">
+            <h2>Circle</h2>
+            <p>A hollow and filled circle</p>
+            <p>Source: <a href="https://codeberg.org/RedFlameKen/Burn/src/src/demo/circle.c">src/demos/circle.c</a>
+            </p>
+            <canvas id="app-circle" class="demo_canvas"></canvas>
+        </div>
         <div id="div-sprite_resize" class="demo_section">
             <h2>Stretching Textures</h2>
             <p>A checkerboard texture stretching dynamically</p>
@@ -68,6 +75,7 @@
 </script>
 <script>
     start("triangle", "bin/triangle.wasm")
+    start("circle", "bin/circle.wasm")
     start("sprite_resize", "bin/sprite_resize.wasm")
     start("triangle_textured", "bin/triangle_textured.wasm")
     start("triangle3d", "bin/triangle3d.wasm")
